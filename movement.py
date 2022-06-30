@@ -1,3 +1,4 @@
 # movement system for the game
-def keyPresses
+def keyPresses():
   pygame.event.game()
+  print("Hi Nathan")
