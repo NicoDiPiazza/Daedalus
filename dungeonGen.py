@@ -1,10 +1,10 @@
-
+import random
 # variables for generation
 
 
 def dunGen(N_rooms:int, boss:bool, shop:bool):
     from math import floor
-    from random import random
+    from random import random as random_func
 
     roomsNeeded = 2
     if boss:
@@ -21,16 +21,19 @@ def dunGen(N_rooms:int, boss:bool, shop:bool):
     dunArray = []
     startGridCoords = [5, 5]
 
-    entry = floor(random() * (N_rooms - 1))
+    # entry = floor(random() * (N_rooms - 1))
+    entry = random.randrange(N_rooms - 1)
     newBoss = boss
     bossRoom = -1
     while newBoss:
-        bossRoom = floor(random() * (N_rooms - 1))
+        # bossRoom = floor(random_func() * (N_rooms - 1))
+        bossRoom = random.randrange(N_rooms - 1)
         newBoss = bossRoom == entry
     newShop = shop
     shopRoom = -1
     while newShop:
-        shopRoom = floor(random() * (N_rooms - 1))
+        # shopRoom = floor(random_func() * (N_rooms - 1))
+        shopRoom = random.randrange(N_rooms - 1)
         newShop = shopRoom == entry or shopRoom == bossRoom
 
 
@@ -41,7 +44,7 @@ def dunGen(N_rooms:int, boss:bool, shop:bool):
             redo = True
 
             while redo:
-                direction = random() * 4
+                direction = random_func() * 4
                 if direction <= 1:
                     newCoords = [dunArray[i-1][0] - 1, dunArray[i-1][1]]
                 elif direction <= 2:
