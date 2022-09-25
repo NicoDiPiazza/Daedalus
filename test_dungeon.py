@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-import dungeonGen
+import dungeon
 
 
 class DungeonTestCase:
@@ -10,4 +10,3 @@ class DungeonTestCase:
 
 if __name__ == "__main__":
     unittest.main()
-
