@@ -1,17 +1,26 @@
 import random
 from dataclasses import dataclass
+from enum import Enum, auto
 from typing import Optional
 
 import pygame
 from pygame.surface import Surface
 
 
+class RoomType(Enum):
+    BASIC = auto()
+    BOSS = auto()
+    ENTRY = auto()
+    EXIT = auto()
+    SHOP = auto()
+
+
 ROOM_COLORS = {
-    "basic": (0, 0, 255),
-    "shop": (0, 255, 0),
-    "entry": (255, 255, 0),
-    "exit": (255, 255, 0),
-    "boss": (255, 0, 0),
+    RoomType.BASIC: (0, 0, 255),
+    RoomType.BOSS: (255, 0, 0),
+    RoomType.ENTRY: (255, 255, 0),
+    RoomType.EXIT: (255, 255, 0),
+    RoomType.SHOP: (0, 255, 0),
 }
 
 
@@ -39,7 +48,7 @@ class Point:
 @dataclass
 class DungeonRoom:
     location: Point
-    type: str
+    type: RoomType
 
     def __str__(self) -> str:
         return f"{self.location}\t\t{self.type}"
@@ -60,18 +69,17 @@ def select_random_room(rooms: int, taken: list[int]) -> int:
             return room
 
 
-def get_room_type(
-    room_id: int, rooms: int, boss_room: Optional[int], shop_room: Optional[int]
-) -> str:
+def get_room_type(room_id: int, rooms: int, boss_room: Optional[int],
+                  shop_room: Optional[int]) -> RoomType:
     if room_id == 0:
-        return "entry"
+        return RoomType.ENTRY
     if room_id == rooms - 1:
-        return "exit"
+        return RoomType.EXIT
     if room_id == boss_room:
-        return "boss"
+        return RoomType.BOSS
     if room_id == shop_room:
-        return "shop"
-    return "basic"
+        return RoomType.SHOP
+    return RoomType.BASIC
 
 
 def is_room_taken(dungeon: list[DungeonRoom], next: Point) -> bool:
@@ -82,14 +90,12 @@ def is_room_taken(dungeon: list[DungeonRoom], next: Point) -> bool:
 
 
 def get_random_room_location(last_room_location: Point) -> Point:
-    return random.choice(
-        (
-            last_room_location.up,
-            last_room_location.down,
-            last_room_location.left,
-            last_room_location.right,
-        )
-    )(1)
+    return random.choice((
+        last_room_location.up,
+        last_room_location.down,
+        last_room_location.left,
+        last_room_location.right,
+    ))(1)
 
 
 def get_next_room_location(dungeon: list[DungeonRoom], current: int) -> Point:
@@ -124,7 +130,6 @@ def generate(*, rooms: int, boss: bool, shop: bool) -> list[DungeonRoom]:
             DungeonRoom(
                 get_next_room_location(dungeon, i),
                 get_room_type(i, rooms, boss_room, shop_room),
-            )
-        )
+            ))
 
     return dungeon

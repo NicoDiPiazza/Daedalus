@@ -1,12 +1,10 @@
-import pprint
-
 import pygame
 import dungeons
 
 
 def main() -> None:
     pygame.init()
-    screen = pygame.display.set_mode([800, 800])
+    screen = pygame.display.set_mode((800, 800))
 
     # print("Hi Nathan")
     # print("Hello Nico")
@@ -30,3 +28,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
