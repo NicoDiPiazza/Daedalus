@@ -1,5 +1,6 @@
 import pygame
 import dungeons
+from dungeon import Dungeon
 
 
 def main() -> None:
@@ -9,7 +10,8 @@ def main() -> None:
     # print("Hi Nathan")
     # print("Hello Nico")
 
-    dungeon = dungeons.generate(rooms=16, boss=True, shop=True)
+    # dungeon = dungeons.generate(rooms=16, boss=True, shop=True)
+    dungeon = Dungeon(16, True, True)
 
     for i, room in enumerate(dungeon):
         print(f"Room {i}: \t\t{room}")

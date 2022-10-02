@@ -1,65 +1,7 @@
 import random
-from dataclasses import dataclass
-from enum import Enum, auto
 from typing import Optional
 
-import pygame
-from pygame.surface import Surface
-
-
-class RoomType(Enum):
-    BASIC = auto()
-    BOSS = auto()
-    ENTRY = auto()
-    EXIT = auto()
-    SHOP = auto()
-
-
-ROOM_COLORS = {
-    RoomType.BASIC: (0, 0, 255),
-    RoomType.BOSS: (255, 0, 0),
-    RoomType.ENTRY: (255, 255, 0),
-    RoomType.EXIT: (255, 255, 0),
-    RoomType.SHOP: (0, 255, 0),
-}
-
-
-@dataclass
-class Point:
-    x: int
-    y: int
-
-    def __str__(self) -> str:
-        return f"({self.x}, {self.y})"
-
-    def up(self, amount: int) -> "Point":
-        return Point(self.x, self.y - amount)
-
-    def down(self, amount: int) -> "Point":
-        return Point(self.x, self.y + amount)
-
-    def left(self, amount: int) -> "Point":
-        return Point(self.x - amount, self.y)
-
-    def right(self, amount: int) -> "Point":
-        return Point(self.x + amount, self.y)
-
-
-@dataclass
-class DungeonRoom:
-    location: Point
-    type: RoomType
-
-    def __str__(self) -> str:
-        return f"{self.location}\t\t{self.type}"
-
-    def draw(self, surface: Surface) -> None:
-        pygame.draw.circle(
-            surface,
-            ROOM_COLORS[self.type],
-            (self.location.x * 20, self.location.y * 20),
-            5,
-        )
+from room import RoomType
 
 
 def select_random_room(rooms: int, taken: list[int]) -> int:
@@ -82,13 +24,6 @@ def get_room_type(room_id: int, rooms: int, boss_room: Optional[int],
     return RoomType.BASIC
 
 
-def is_room_taken(dungeon: list[DungeonRoom], next: Point) -> bool:
-    for room in dungeon:
-        if room.location.x == next.x and room.location.y == next.y:
-            return True
-    return False
-
-
 def get_random_room_location(last_room_location: Point) -> Point:
     return random.choice((
         last_room_location.up,
@@ -97,39 +32,3 @@ def get_random_room_location(last_room_location: Point) -> Point:
         last_room_location.right,
     ))(1)
 
-
-def get_next_room_location(dungeon: list[DungeonRoom], current: int) -> Point:
-    if current < 0:
-        raise ValueError(f"expected room id larger than 0, got {current}")
-    if current == 0:
-        return Point(7, 7)
-    last_room_location = dungeon[current - 1].location
-    while True:
-        next = get_random_room_location(last_room_location)
-        if not is_room_taken(dungeon, next):
-            return next
-
-
-def generate(*, rooms: int, boss: bool, shop: bool) -> list[DungeonRoom]:
-    # Add one if boss is true, else add 0. Same for shop.
-    rooms_needed = 2 + int(boss) + int(shop)
-    if rooms < rooms_needed:
-        raise ValueError("Not enough rooms!")
-
-    taken = [0, rooms - 1]
-    dungeon: list[DungeonRoom] = []
-
-    boss_room = select_random_room(rooms, taken)
-    taken.append(boss_room)
-
-    shop_room = select_random_room(rooms, taken)
-    taken.append(shop_room)
-
-    for i in range(rooms):
-        dungeon.append(
-            DungeonRoom(
-                get_next_room_location(dungeon, i),
-                get_room_type(i, rooms, boss_room, shop_room),
-            ))
-
-    return dungeon

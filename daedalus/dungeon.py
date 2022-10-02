@@ -1,4 +1,5 @@
 import random
+from typing import Iterator
 
 from daedalus.dungeons import (DungeonRoom, Point, get_random_room_location,
                                get_room_type, select_random_room)
@@ -29,6 +30,9 @@ class Dungeon:
             self.rooms.append(
                 DungeonRoom(self.get_next_room_location(i, Point(7, 7)),
                             get_room_type(i, rooms, boss_room, shop_room)))
+
+    def __iter__(self) -> Iterator[DungeonRoom]:
+        return iter(self.rooms)
 
     def is_room_taken(self, next: Point) -> bool:
         for room in self.rooms:
